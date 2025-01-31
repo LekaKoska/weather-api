@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminForecastController;
 use App\Http\Controllers\AdminWeatherController;
 use App\Http\Controllers\ForecastController;
 use App\Http\Controllers\ProfileController;
@@ -33,6 +34,9 @@ Route::middleware('auth')->prefix('admin')->group(function ()
     Route::view("/weather", "weather.addFormWeather");
     Route::post("/weather/update", [AdminWeatherController::class, "update"])
     ->name("weather.update");
+    Route::view("/forecasts", "weather.addForecast");
+    Route::post("/forecasts/add", [AdminForecastController::class, "add"])
+    ->name("forecast.add");
 });
 
 
