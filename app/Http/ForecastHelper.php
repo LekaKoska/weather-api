@@ -30,7 +30,7 @@
 
         public static function getIconByWeatherType($type)
         {
-//            <i class="fa-regular fa-snowflake"></i>
+//        <i class="fa-regular fa-snowflake"></i>
 //        <i class="fa-regular fa-sun"></i>
 //        <i class="fa-solid fa-cloud-rain"></i>
 

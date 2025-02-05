@@ -1,10 +1,15 @@
 @extends("layout")
+@section("naslovStranice")
+    Glavna strana
+@endsection
 
 
 
 @section("sadrzajStranice")
-    <p>Trenutno vreme je : {{ date("h:i:s") }} </p>
-@endsection
-@section("naslovStranice")
-    Glavna strana
+    <form action="">
+        <div>
+            <input type="text" placeholder="Unesite ime grada">
+            <button>Pronadji</button>
+        </div>
+    </form>
 @endsection
