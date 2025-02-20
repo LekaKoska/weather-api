@@ -27,7 +27,15 @@ class ForecastController extends Controller
            return redirect()->back()->with("error", "Nismo uspeli da pronadjemo zeljeni grad!");
        }
 
-        return view("search_results", compact("cities"));
+        $userFavourite = [];
+       if(Auth::check())
+       {
+           $userFavourite = Auth::user()->cityFavourites;
+           $userFavourite = $userFavourite->pluck("city_id")->toArray();
+       }
+
+
+        return view("search_results", compact("cities", "userFavourite"));
     }
 
 
