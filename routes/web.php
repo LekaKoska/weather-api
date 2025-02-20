@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminForecastController;
 use App\Http\Controllers\AdminWeatherController;
 use App\Http\Controllers\ForecastController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserCityController;
 use App\Http\Controllers\WeatherController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +21,8 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::view("/", "welcome");
+Route::get("/forecast/search", [ForecastController::class, "search"])
+->name("forecast.search");
 
 Route::view("/about", "about");
 
@@ -27,7 +30,11 @@ Route::view("/shop", "shop");
 
 Route::get("/prognoza", [WeatherController::class, "all"]);
 
-Route::get("/forecast/{city:name}", [ForecastController::class, "index"]);
+Route::get("/forecast/{city:name}", [ForecastController::class, "index"])
+->name("forecast.permalink");
+
+Route::get("/user-favourite/{city}", [UserCityController::class, "favourite"])
+    ->name("forecast.favourite");
 
 Route::middleware('auth')->prefix('admin')->group(function ()
 {

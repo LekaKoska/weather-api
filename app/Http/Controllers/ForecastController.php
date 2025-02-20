@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CitiesModel;
 use App\Models\ForecastModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ForecastController extends Controller
 {
@@ -15,4 +16,19 @@ class ForecastController extends Controller
 
         return view("weather.forecast", compact("cities"));
     }
+
+    public function search(Request $request)
+    {
+        $cityName = $request->get("city");
+
+        $cities = CitiesModel::with("todayForecast")->where("name", "LIKE", "%$cityName%")->get();
+       if(count($cities) == 0)
+       {
+           return redirect()->back()->with("error", "Nismo uspeli da pronadjemo zeljeni grad!");
+       }
+
+        return view("search_results", compact("cities"));
+    }
+
+
 }

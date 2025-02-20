@@ -8,9 +8,10 @@
 </head>
 <body>
 <form action="{{route("weather.update")}}" method="POST">
+
     {{csrf_field()}}
     <input type="number" required placeholder="Unesite temperaturu" name="temperature">
-    <select name="cityId">
+    <select name="city_id">
         @foreach(CitiesModel::all() as $city)
             <option value="{{$city->id}}">{{$city->name}}</option>
         @endforeach
@@ -19,9 +20,11 @@
     <button>Snimi</button>
 </form>
 <div>
+
     @foreach(WeatherModel::all() as $weather)
         <p>{{$weather->city->name}} - {{$weather->temperature}} </p>
     @endforeach
 </div>
+
 </body>
 </html>

@@ -30,9 +30,7 @@
 
         public static function getIconByWeatherType($type)
         {
-//        <i class="fa-regular fa-snowflake"></i>
-//        <i class="fa-regular fa-sun"></i>
-//        <i class="fa-solid fa-cloud-rain"></i>
+
 
             if($type == "sunny")
             {
@@ -46,11 +44,15 @@
             {
                 $icon = "fa-cloud-rain";
             }
+            else if($type == "cloudy")
+            {
+                $icon = "fa-cloud";
+            }
 
             return $icon;
+
+
+
         }
-
-
-
     }
 

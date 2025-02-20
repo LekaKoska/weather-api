@@ -9,16 +9,19 @@ class AdminWeatherController extends Controller
 {
     public function update(Request $request)
     {
+
         $request->validate([
             'city_id' => 'required|exists:cities,id',
-            'temperature' => 'required'
+            'temperature' => 'required',
+
         ]);
+        $weather = WeatherModel::where(["city_id" => $request->get("city_id")])->first();
+        $weather->temperature = $request->get("temperature");
 
-       $weather = WeatherModel::where(['city_id' => $request->get("cityId")])->first();
-       $weather->temperature = $request->get("temperature");
-       $weather->save();
+        $weather->save();
 
-       return redirect()->back();
+        return redirect()->back();
+
 
     }
 }

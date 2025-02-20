@@ -16,5 +16,5 @@ class AdminForecastController extends Controller
             "forecast_date" => "required",
         ]);
         ForecastModel::create($request->all());
-    }
+    }q
 }
