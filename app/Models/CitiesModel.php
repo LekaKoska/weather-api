@@ -19,7 +19,6 @@ class CitiesModel extends Model
 
     public function todayForecast()
     {
-        return $this->hasOne(ForecastModel::class, "city_id", "id") // Nadji mi vezu izmedju ovogo modela i Forecast
-            ->whereDate("forecast_date", Carbon::now()); // Pronadji mi datum forecast_date koji je isti kao i danasnji
+        return $this->hasOne(ForecastModel::class, "city_id", "id"); // Nadji mi vezu izmedju ovogo modela i Forecast; // Pronadji mi datum forecast_date koji je isti kao i danasnji
     }
 }
