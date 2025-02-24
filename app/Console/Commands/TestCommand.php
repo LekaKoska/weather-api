@@ -26,10 +26,11 @@ class TestCommand extends Command
      */
     public function handle()
     {
-        $url = "https://reqres.in/api/users/2";
-        $response = Http::get($url);
-       $jsonConvert = $response->body();
-       $jsonConvert = json_decode($jsonConvert, true);
-       dd($jsonConvert['data']['first_name']);
+        $response = Http::post("https://reqres.in/api/users",
+            [
+                "name" => "Alek",
+                "job" => "Programmer"
+            ]);
+        dd($response->json());
     }
 }
