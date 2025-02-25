@@ -26,11 +26,6 @@ class TestCommand extends Command
      */
     public function handle()
     {
-        $response = Http::post("https://reqres.in/api/users",
-            [
-                "name" => "Alek",
-                "job" => "Programmer"
-            ]);
-        dd($response->json());
+
     }
 }
