@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CitiesModel;
 use App\Models\ForecastModel;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\Action;
 use Illuminate\Support\Facades\Auth;
 
 class ForecastController extends Controller

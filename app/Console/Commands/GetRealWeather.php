@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Models\CitiesModel;
+use App\Models\ForecastModel;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 
@@ -12,7 +14,7 @@ class GetRealWeather extends Command
      *
      * @var string
      */
-    protected $signature = 'weather:get-real';
+    protected $signature = 'weather:get-real {city}';
 
     /**
      * The console command description.
@@ -26,15 +28,44 @@ class GetRealWeather extends Command
      */
     public function handle()
     {
-        $url = "http://api.weatherapi.com/v1/current.json";
-        $apiKey = "521dcfc1f97c49fcbff115430252402";
+        $city = $this->argument("city");
+        $dbCity = CitiesModel::where(['name' => $city])->first();
+        if($dbCity === null)
+        {
+            $dbCity = CitiesModel::create(['name' => $city]);
+        }
+
+
+        $url = "http://api.weatherapi.com/v1/forecast.json";
+
+
 
         $response = Http::get($url,
-            ["key" => $apiKey,
-                "q" => "Novi Sad"
+            [   "key" => env("WEATHER_API_KEY"),
+                "q" =>  $city,
+                "aqi" => "no",
+                "days" => 1,
             ]);
         $convertJson = $response->json();
+        if(isset($convertJson['error']))
+        {
+            $this->getOutput()->error($convertJson['error']['message']);
+        }
 
-        dd($convertJson['current']['temp_c']);
+        $temperature = $convertJson['forecast']['forecastday'][0]['day']['avgtemp_c'];
+        $forecastDate = $convertJson['forecast']['forecastday'][0]['date'];
+        $weather_type = $convertJson['forecast']['forecastday'][0]['day']['condition']['text'];
+        $probabilty = $convertJson['forecast']['forecastday'][0]['day']['daily_chance_of_rain'];
+
+        $forecast = [
+            'city_id' => $dbCity->id,
+            'temperature' => $temperature,
+            'forecast_date' => $forecastDate,
+            'weather_type' => $weather_type,
+            'probability' => $probabilty
+        ];
+
+        ForecastModel::create($forecast);
+
     }
 }
