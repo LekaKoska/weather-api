@@ -26,10 +26,15 @@ class GetRealWeather extends Command
      */
     public function handle()
     {
-        $url =  "https://reqres.in/api/users?page=2";
-        $response = Http::get($url);
-        $jsonResponse = $response->body();
-        $jsonResponse = json_decode($jsonResponse, true);
-        dd($jsonResponse['data'][0]['email']);
+        $url = "http://api.weatherapi.com/v1/current.json";
+        $apiKey = "521dcfc1f97c49fcbff115430252402";
+
+        $response = Http::get($url,
+            ["key" => $apiKey,
+                "q" => "Novi Sad"
+            ]);
+        $convertJson = $response->json();
+
+        dd($convertJson['current']['temp_c']);
     }
 }
