@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\CitiesModel;
 use App\Models\ForecastModel;
+use App\Services\WeatherService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 
@@ -41,17 +42,11 @@ class GetRealWeather extends Command
             return;                          // zaustavlja kod
         }
 
-        $url = "http://api.weatherapi.com/v1/forecast.json";
 
+        $weatherService = new WeatherService();
 
+        $convertJson = $weatherService->getForecast($city);
 
-        $response = Http::get($url,
-            [   "key" => env("WEATHER_API_KEY"),
-                "q" =>  $city,
-                "aqi" => "no",
-                "days" => 1,
-            ]);
-        $convertJson = $response->json();
         if(isset($convertJson['error']))
         {
             $this->getOutput()->error($convertJson['error']['message']);

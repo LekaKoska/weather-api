@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CitiesModel;
 use App\Models\ForecastModel;
+use App\Services\WeatherService;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Action;
 use Illuminate\Support\Facades\Artisan;
@@ -18,17 +19,11 @@ class ForecastController extends Controller
        $cities = ForecastModel::where(['city_id' => $city->id])->get();
 
 
-       $url = "http://api.weatherapi.com/v1/astronomy.json";
+        $weatherService = new WeatherService();
 
-       $response = Http::get($url,
-           [
-               "key" => env("WEATHER_API_KEY"),
-               "q" =>  $city->name,
-               "aqi" => "no"
 
-           ]);
 
-         $jsonResponse = $response->json();
+         $jsonResponse = $weatherService->getAstronomy($city->name);
 
          $sunrise = $jsonResponse['astronomy']['astro']['sunrise'];
          $sunset =  $jsonResponse['astronomy']['astro']['sunset'];
