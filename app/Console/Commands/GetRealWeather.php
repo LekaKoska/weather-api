@@ -28,13 +28,18 @@ class GetRealWeather extends Command
      */
     public function handle()
     {
+
         $city = $this->argument("city");
-        $dbCity = CitiesModel::where(['name' => $city])->first();
+        $dbCity = CitiesModel::where(['name' => $city])->first();  // Proveravamo da li grad postoji
         if($dbCity === null)
         {
             $dbCity = CitiesModel::create(['name' => $city]);
         }
-
+        if($dbCity->todayForecast !== null ) // ako postoji
+        {
+            $this->getOutput()->comment("Command finished");
+            return;                          // zaustavlja kod
+        }
 
         $url = "http://api.weatherapi.com/v1/forecast.json";
 
@@ -52,20 +57,21 @@ class GetRealWeather extends Command
             $this->getOutput()->error($convertJson['error']['message']);
         }
 
+
         $temperature = $convertJson['forecast']['forecastday'][0]['day']['avgtemp_c'];
         $forecastDate = $convertJson['forecast']['forecastday'][0]['date'];
         $weather_type = $convertJson['forecast']['forecastday'][0]['day']['condition']['text'];
-        $probabilty = $convertJson['forecast']['forecastday'][0]['day']['daily_chance_of_rain'];
+        $probability = $convertJson['forecast']['forecastday'][0]['day']['daily_chance_of_rain'];
 
         $forecast = [
             'city_id' => $dbCity->id,
             'temperature' => $temperature,
             'forecast_date' => $forecastDate,
-            'weather_type' => $weather_type,
-            'probability' => $probabilty
+            'weather_type' => strtolower($weather_type),
+            'probability' => $probability
         ];
 
         ForecastModel::create($forecast);
-
+        $this->getOutput()->comment("Added new city!");
     }
 }

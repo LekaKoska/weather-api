@@ -6,6 +6,7 @@ use App\Models\CitiesModel;
 use App\Models\ForecastModel;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Action;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
 class ForecastController extends Controller
@@ -21,6 +22,8 @@ class ForecastController extends Controller
     public function search(Request $request)
     {
         $cityName = $request->get("city");
+
+        Artisan::call("weather:get-real", ["city" => $cityName]);
 
         $cities = CitiesModel::with("todayForecast")->where("name", "LIKE", "%$cityName%")->get();
        if(count($cities) == 0)
