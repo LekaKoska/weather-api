@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Notifications\Action;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class ForecastController extends Controller
 {
@@ -16,7 +17,23 @@ class ForecastController extends Controller
 
        $cities = ForecastModel::where(['city_id' => $city->id])->get();
 
-        return view("weather.forecast", compact("cities"));
+
+       $url = "http://api.weatherapi.com/v1/astronomy.json";
+
+       $response = Http::get($url,
+           [
+               "key" => env("WEATHER_API_KEY"),
+               "q" =>  $city->name,
+               "aqi" => "no"
+
+           ]);
+
+         $jsonResponse = $response->json();
+
+         $sunrise = $jsonResponse['astronomy']['astro']['sunrise'];
+         $sunset =  $jsonResponse['astronomy']['astro']['sunset'];
+
+        return view("weather.forecast", compact("cities", "sunrise", "sunset"));
     }
 
     public function search(Request $request)

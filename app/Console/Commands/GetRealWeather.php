@@ -58,6 +58,7 @@ class GetRealWeather extends Command
         }
 
 
+
         $temperature = $convertJson['forecast']['forecastday'][0]['day']['avgtemp_c'];
         $forecastDate = $convertJson['forecast']['forecastday'][0]['date'];
         $weather_type = $convertJson['forecast']['forecastday'][0]['day']['condition']['text'];
