@@ -15,11 +15,20 @@ class FavouriteCityRepository
 
    public function addToFavourite($city, $user) 
    {
-     UserCityModel::create(
+    return  UserCityModel::create(
             [
                 "user_id" => $user->id,
                 "city_id" => $city            ]
         );
 
    } 
+
+   public function unfavourite($city, $user) 
+   {
+     $userFavourites = UserCityModel::where([
+            'city_id' => $city,
+            'user_id' => $user->id
+        ])->first();
+       return $userFavourites->delete();
+   }
 }

@@ -20,7 +20,7 @@ class UserCityController extends Controller
     public function favourite(Request $request, $city)
     {
         
-
+        
       
         $user = Auth::user();
 
@@ -37,17 +37,13 @@ class UserCityController extends Controller
     public function unfavourite(Request $request, $city)
     {
         $user = Auth::user();
-
+            
         if($user === null)
         {
             return redirect()->back()->with("error", "You must be logged to favourite city");
         }
 
-        $userFavourites = UserCityModel::where([
-            'city_id' => $city,
-            'user_id' => $user->id
-        ])->first();
-        $userFavourites->delete();
+        $this->userCityRepo->unfavourite($city, $user);
 
         return redirect()->back();
     }
