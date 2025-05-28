@@ -11,6 +11,7 @@ class WeatherController extends Controller
     public function all()
     {
         $weather = WeatherModel::all();
+        
 
         return view("weather.prognoza", compact("weather"));
     }
