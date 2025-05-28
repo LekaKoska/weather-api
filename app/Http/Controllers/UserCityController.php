@@ -5,11 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\UserCityModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Repositories\FavouriteCityRepository;
+
 
 class UserCityController extends Controller
 {
+    private $userCityRepo;
+
+      public function __construct() 
+        {
+            $this->userCityRepo = new FavouriteCityRepository();
+        }
+
     public function favourite(Request $request, $city)
     {
+        
+
+      
         $user = Auth::user();
 
         if($user === null)
@@ -17,11 +29,7 @@ class UserCityController extends Controller
             return redirect()->back()->with("error", "You must be logged to favourite city");
         }
 
-        UserCityModel::create(
-            [
-                "user_id" => $user->id,
-                "city_id" => $city            ]
-        );
+        $this->userCityRepo->addToFavourite($city, $user);
 
             return redirect()->back();
     }
