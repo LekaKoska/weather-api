@@ -53,7 +53,7 @@ Route::get("/user-favourite/{city}", [UserCityController::class, "favourite"])
 Route::get("/user-unfavourite/{city}", [UserCityController::class, "unfavourite"])
 ->name("forecast.unfavourite");
 
-Route::middleware('auth')->prefix('admin')->group(function ()
+Route::middleware(['auth', AdminCheckMiddleware::class])->prefix('admin')->group(function ()
 {
     Route::view("/weather", "weather.addFormWeather");
     Route::post("/weather/update", [AdminWeatherController::class, "update"])
