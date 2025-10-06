@@ -29,45 +29,59 @@ class GetRealWeather extends Command
      */
     public function handle()
     {
+        $cityName = ucfirst(strtolower($this->argument("city")));
 
-        $city = $this->argument("city");
-        $dbCity = CitiesModel::where(['name' => $city])->first();  // Proveravamo da li grad postoji
-        if($dbCity === null)
-        {
-            $dbCity = CitiesModel::create(['name' => $city]);
-        }
-        if($dbCity->todayForecast !== null ) // ako postoji
-        {
-            $this->getOutput()->comment("Command finished");
-            return;                          // zaustavlja kod
+
+        $dbCity = CitiesModel::where('name', $cityName)->first();
+
+
+
+        if ($dbCity && $dbCity->todayForecast && $dbCity->todayForecast->forecast_date == now()->toDateString()) {
+            $this->getOutput()->comment("Forecast for {$cityName} is already up to date.");
+            return;
         }
 
 
         $weatherService = new WeatherService();
+        $convertJson = $weatherService->getForecast($cityName);
 
-        $convertJson = $weatherService->getForecast($city);
 
-        if(isset($convertJson['error']))
-        {
-            $this->getOutput()->error($convertJson['error']['message']);
+        if (isset($convertJson['error'])) {
+            $this->getOutput()->error("City '{$cityName}' not found in API.");
+            return;
         }
 
 
+        if (!$dbCity) {
+            $realCityName = $convertJson['location']['name'] ?? $cityName;
+            $dbCity = CitiesModel::create(['name' => $realCityName]);
+        }
 
-        $temperature = $convertJson['forecast']['forecastday'][0]['day']['avgtemp_c'];
-        $forecastDate = $convertJson['forecast']['forecastday'][0]['date'];
-        $weather_type = $convertJson['forecast']['forecastday'][0]['day']['condition']['text'];
-        $probability = $convertJson['forecast']['forecastday'][0]['day']['daily_chance_of_rain'];
+        $forecastData = $convertJson['forecast']['forecastday'][0];
+        $temperature = $forecastData['day']['avgtemp_c'];
+        $forecastDate = $forecastData['date'];
+        $weather_type = strtolower($forecastData['day']['condition']['text']);
+        $probability = $forecastData['day']['daily_chance_of_rain'];
 
-        $forecast = [
-            'city_id' => $dbCity->id,
-            'temperature' => $temperature,
-            'forecast_date' => $forecastDate,
-            'weather_type' => strtolower($weather_type),
-            'probability' => $probability
-        ];
 
-        ForecastModel::create($forecast);
-        $this->getOutput()->comment("Added new city!");
+        ForecastModel::where('city_id', $dbCity->id)
+            ->whereDate('forecast_date', '<', now()->toDateString())
+            ->delete();
+
+
+        ForecastModel::updateOrCreate(
+            [
+                'city_id' => $dbCity->id,
+                'forecast_date' => $forecastDate,
+            ],
+            [
+                'temperature' => $temperature,
+                'weather_type' => $weather_type,
+                'probability' => $probability,
+            ]
+        );
+
+        $this->getOutput()->info("Weather for {$cityName} updated successfully!");
     }
+
 }
