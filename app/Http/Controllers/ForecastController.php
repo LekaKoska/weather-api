@@ -6,53 +6,49 @@ use App\Models\CitiesModel;
 use App\Models\ForecastModel;
 use App\Services\WeatherService;
 use Illuminate\Http\Request;
-use Illuminate\Notifications\Action;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
 
 class ForecastController extends Controller
 {
-    public function index(CitiesModel $city)
+    public function index(CitiesModel $city, WeatherService $weatherService)
     {
+        $cities = ForecastModel::where(['city_id' => $city->id])->get();
 
-       $cities = ForecastModel::where(['city_id' => $city->id])->get();
-
-
-        $weatherService = new WeatherService();
+        $jsonResponse = $weatherService->getAstronomy($city->name);
 
 
+        $location = $jsonResponse['location']['country'];
+        $region = $jsonResponse['location']['region'];
+        $sunrise = $jsonResponse['astronomy']['astro']['sunrise'];
+        $sunset = $jsonResponse['astronomy']['astro']['sunset'];
 
-         $jsonResponse = $weatherService->getAstronomy($city->name);
-
-         $sunrise = $jsonResponse['astronomy']['astro']['sunrise'];
-         $sunset =  $jsonResponse['astronomy']['astro']['sunset'];
-
-        return view("weather.forecast", compact("cities", "sunrise", "sunset"));
+        return view("weather.forecast", compact("cities", "sunrise", "sunset", 'location', 'region'));
     }
 
     public function search(Request $request)
     {
-        $cityName = $request->get("city");
+        $cityName = trim($request->get("city"));
+
+        if (empty($cityName)) {
+            return redirect()->back()->with("error", "You must enter name of city!");
+        }
 
         Artisan::call("weather:get-real", ["city" => $cityName]);
 
-        $cities = CitiesModel::with("todayForecast")->where("name", "LIKE", "%$cityName%")->get();
-       if(count($cities) == 0)
-       {
-           return redirect()->back()->with("error", "Nismo uspeli da pronadjemo zeljeni grad!");
-       }
+        $cities = CitiesModel::with("todayForecast")
+            ->where("name", "LIKE", "%{$cityName}%")
+            ->get();
+
+        if ($cities->isEmpty()) {
+            return redirect()->back()->with("error", "We can't find your city");
+        }
 
         $userFavourite = [];
-       if(Auth::check())
-       {
-           $userFavourite = Auth::user()->cityFavourites;
-           $userFavourite = $userFavourite->pluck("city_id")->toArray();
-       }
-
+        if (Auth::check()) {
+            $userFavourite = Auth::user()->cityFavourites->pluck("city_id")->toArray();
+        }
 
         return view("search_results", compact("cities", "userFavourite"));
     }
-
-
 }
