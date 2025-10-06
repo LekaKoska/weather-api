@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SearchCityRequest;
 use App\Models\CitiesModel;
 use App\Models\ForecastModel;
 use App\Services\WeatherService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class ForecastController extends Controller
 {
-    public function index(CitiesModel $city, WeatherService $weatherService)
+    public function index(CitiesModel $city, WeatherService $weatherService): View
     {
         $cities = ForecastModel::where(['city_id' => $city->id])->get();
 
@@ -26,19 +29,13 @@ class ForecastController extends Controller
         return view("weather.forecast", compact("cities", "sunrise", "sunset", 'location', 'region'));
     }
 
-    public function search(Request $request)
+    public function search(SearchCityRequest $request, WeatherService $weatherService): RedirectResponse|View
     {
         $cityName = trim($request->get("city"));
 
-        if (empty($cityName)) {
-            return redirect()->back()->with("error", "You must enter name of city!");
-        }
-
         Artisan::call("weather:get-real", ["city" => $cityName]);
 
-        $cities = CitiesModel::with("todayForecast")
-            ->where("name", "LIKE", "%{$cityName}%")
-            ->get();
+        $cities = $weatherService->citySearch($cityName);
 
         if ($cities->isEmpty()) {
             return redirect()->back()->with("error", "We can't find your city");
