@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
-use App\Http\Controllers\ForecastController;
 use App\Models\CitiesModel;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
 
 class WeatherService
 {
-    public function getForecast($city)
+    public function getForecast($city): JsonResponse
     {
         $url = "http://api.weatherapi.com/v1/forecast.json";
 
@@ -23,7 +24,7 @@ class WeatherService
 
     }
 
-    public function getAstronomy($city)
+    public function getAstronomy($city): JsonResponse
     {
         $url = "http://api.weatherapi.com/v1/astronomy.json";
 
@@ -38,7 +39,7 @@ class WeatherService
         return $response->json();
     }
 
-    public function citySearch($cityName)
+    public function citySearch($cityName): Collection
     {
         return CitiesModel::with("todayForecast")
             ->where("name", "LIKE", "%{$cityName}%")
