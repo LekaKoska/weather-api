@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Http\Controllers\ForecastController;
+use App\Models\CitiesModel;
 use Illuminate\Support\Facades\Http;
 
 class WeatherService
@@ -34,5 +36,12 @@ class WeatherService
             ]);
 
         return $response->json();
+    }
+
+    public function citySearch($cityName)
+    {
+        return CitiesModel::with("todayForecast")
+            ->where("name", "LIKE", "%{$cityName}%")
+            ->get();
     }
 }
