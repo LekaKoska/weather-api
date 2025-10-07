@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class CitiesModel extends Model
 {
-    protected $table = "cities";
+    const TABLE = 'cities';
+    protected $table = self::TABLE;
 
     protected $fillable = ['name'];
 

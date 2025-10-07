@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class WeatherModel extends Model
 {
-    protected $table = "weather";
+    const TABLE = "weather";
+    protected $table = self::TABLE;
 
     protected $fillable = [
         "city_id", "temperature",
