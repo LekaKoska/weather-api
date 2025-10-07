@@ -6,6 +6,7 @@ use App\Http\Controllers\ForecastController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserCityController;
 use App\Http\Controllers\WeatherController;
+use App\Http\Middleware\AdminCheckMiddleware;
 use App\Models\UserCityModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -22,45 +23,46 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get("/", function ()
-{
-    $userFavourites = [];
-    $user = Auth::user();
-    if($user !== null)
-    {
-       $userFavourites = UserCityModel::where([
-           'user_id' => $user->id
-       ])->get();
-    }
+Route::view("/", "welcome");
 
-    return view("welcome", compact("userFavourites"));
+Route::controller(ForecastController::class)->prefix('/forecast/')->name('forecast.')->group(function ()
+{
+    Route::get("search", "search")->name("search");
+    Route::get("{city:name}",  "index")->name("permalink");
+
 });
-Route::get("/forecast/search", [ForecastController::class, "search"])
-->name("forecast.search");
 
 Route::view("/about", "about");
 
-Route::view("/shop", "shop");
+Route::get("/favourites", function () {
+    $userFavourites = [];
+    $user = Auth::user();
+    if ($user !== null) {
+        $userFavourites = UserCityModel::where([
+            'user_id' => $user->id
+        ])->get();
+    }
+    return view("favourites", compact("userFavourites"));
+})->name("forecast.favourites");
 
-Route::get("/prognoza", [WeatherController::class, "all"]);
 
-Route::get("/forecast/{city:name}", [ForecastController::class, "index"])
-->name("forecast.permalink");
+Route::get("/today", [WeatherController::class, "all"]);
 
-Route::get("/user-favourite/{city}", [UserCityController::class, "favourite"])
-    ->name("forecast.favourite");
 
-Route::get("/user-unfavourite/{city}", [UserCityController::class, "unfavourite"])
-->name("forecast.unfavourite");
 
-Route::middleware(['auth', AdminCheckMiddleware::class])->prefix('admin')->group(function ()
+Route::controller(UserCityController::class)->prefix('user-')->name('forecast.')->group(function ()
+{
+    Route::get("favourite/{city}",  "favourite")->name("favourite");
+    Route::get("unfavourite/{city}", "unfavourite")->name("unfavourite");
+});
+
+
+Route::middleware(['auth', AdminCheckMiddleware::class])->prefix('admin')->controller(AdminWeatherController::class)->group(function ()
 {
     Route::view("/weather", "weather.addFormWeather");
-    Route::post("/weather/update", [AdminWeatherController::class, "update"])
-    ->name("weather.update");
+    Route::post("/weather/update",  "update")->name("weather.update");
     Route::view("/forecasts", "weather.addForecast");
-    Route::post("/forecasts/add", [AdminForecastController::class, "add"])
-    ->name("forecast.add");
+    Route::post("/forecasts/add",  "add")->name("forecast.add");
 });
 
 
