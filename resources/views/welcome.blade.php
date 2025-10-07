@@ -1,25 +1,41 @@
 @php use Illuminate\Support\Facades\Session; @endphp
 @extends("layout")
-@section("naslovStranice")
-    Glavna strana
+
+@section("pageHeader")
+    Main Page
 @endsection
 
+@section("pageSection")
+    <section class="d-flex justify-content-center align-items-center vh-100 bg-light">
+        <div class="container text-center bg-white shadow-lg p-5 rounded-4" style="max-width: 500px;">
+            <h1 class="mb-4 text-primary">
+                <i class="fa-solid fa-city me-2"></i>Search City
+            </h1>
 
+            @if(Session::has("error"))
+                <div class="alert alert-danger">
+                    {{ Session::get("error") }}
+                </div>
+            @endif
 
-@section("sadrzajStranice")
-    @foreach($userFavourites as $favourite)
-        <p>{{$favourite->city->name }} - {{$favourite->city->todayForecast->temperature}} </p>
-    @endforeach
-    <form action="{{route("forecast.search")}}" method="GET" style="height: 70vh;"
-          class="text-white text-left d-flex flex-wrap flex-column container justify-content-center align-items-center ">
-        <h1 class="col-md-4 col-12 text-dark"><i class="fa-solid fa-house"></i>Pronadjite svoj grad</h1>
-        @if(Session::has("error"))
-            <p class="text-danger">{{Session::get("error")}}</p>
-        @endif
-        <div class="mb-3 col-md-4 col-12">
-            <input type="text" placeholder="Unesite ime grada" name="city" class="form-control col-12">
-            <button type="submit" class="btn btn-primary col-12 mt-3"><i class="fa-brands fa-searchengin"></i> Pronadji
-            </button>
+            <form action="{{ route('forecast.search') }}" method="GET">
+                <div class="mb-3">
+                    <input
+                        type="text"
+                        name="city"
+                        class="form-control form-control-lg text-center"
+                        placeholder="Enter city name..."
+                        required
+                    >
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg w-100">
+                    <i class="fa-brands fa-searchengin me-2"></i>Find Forecast
+                </button>
+            </form>
+
+            <p class="text-muted mt-4 mb-0">
+                Type the city name and get the latest weather forecast instantly.
+            </p>
         </div>
-    </form>
+    </section>
 @endsection
