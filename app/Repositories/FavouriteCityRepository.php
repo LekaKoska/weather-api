@@ -4,16 +4,16 @@ namespace App\Repositories;
 
 use  App\Models\UserCityModel;
 
-class FavouriteCityRepository 
+class FavouriteCityRepository
 {
     private  $userCityModel;
 
-   public function __construct() 
+   public function __construct()
    {
     $this->userCityModel = new UserCityModel();
    }
 
-   public function addToFavourite($city, $user) 
+   public function addToFavourite($city, $user)
    {
     return  UserCityModel::create(
             [
@@ -21,14 +21,14 @@ class FavouriteCityRepository
                 "city_id" => $city            ]
         );
 
-   } 
+   }
 
-   public function unfavourite($city, $user) 
+   public function unfavourite($city, $user)
    {
-     $userFavourites = UserCityModel::where([
+     $userFavourites = UserCityModel::firstWhere([
             'city_id' => $city,
             'user_id' => $user->id
-        ])->first();
+        ]);
        return $userFavourites->delete();
    }
 }
