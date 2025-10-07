@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ForecastModel;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('forecast', function (Blueprint $table) {
+        Schema::table(ForecastModel::TABLE, function (Blueprint $table) {
             $table->string("weather_type")->default("sunny");
             $table->unsignedSmallInteger("probability")->nullable();
         });
@@ -22,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('forecast', function (Blueprint $table) {
+        Schema::table(ForecastModel::TABLE, function (Blueprint $table) {
             //
         });
     }

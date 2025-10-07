@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\UserCityModel;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_cities', function (Blueprint $table) {
+        Schema::create(UserCityModel::TABLE, function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("user_id");
             $table->unsignedBigInteger("city_id");
@@ -30,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_forecast');
+        Schema::dropIfExists(UserCityModel::TABLE);
     }
 };

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ForecastModel;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('forecast', function (Blueprint $table) {
+        Schema::create(ForecastModel::TABLE, function (Blueprint $table) {
             $table->unsignedBigInteger("city_id");
             $table->foreign("city_id")
                 ->references("id")
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('forecast');
+        Schema::dropIfExists(ForecastModel::TABLE);
     }
 };
