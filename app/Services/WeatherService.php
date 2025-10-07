@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Http;
 
 class WeatherService
 {
-    public function getForecast($city): JsonResponse
+    public function getForecast($city)
     {
         $url = "http://api.weatherapi.com/v1/forecast.json";
 
@@ -24,7 +24,7 @@ class WeatherService
 
     }
 
-    public function getAstronomy($city): JsonResponse
+    public function getAstronomy($city)
     {
         $url = "http://api.weatherapi.com/v1/astronomy.json";
 
