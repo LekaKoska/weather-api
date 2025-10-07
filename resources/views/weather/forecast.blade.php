@@ -1,4 +1,5 @@
 @extends('layout')
+@section('pageSection')
 <div class="container my-4">
     <h2 class="text-center mb-4">Weather Forecast</h2>
 
@@ -47,4 +48,5 @@
         @endforeach
     </div>
 </div>
+@endsection
 
