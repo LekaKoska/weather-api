@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\CitiesModel;
 use App\Models\ForecastModel;
+use App\Models\WeatherModel;
 use App\Services\WeatherService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
@@ -80,6 +81,12 @@ class GetRealWeather extends Command
                 'probability' => $probability,
             ]
         );
+
+        WeatherModel::create(
+            [
+                'city_id' => $dbCity->id,
+                'temperature' => $temperature
+            ]);
 
         $this->getOutput()->info("Weather for {$cityName} updated successfully!");
     }
