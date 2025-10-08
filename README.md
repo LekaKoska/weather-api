@@ -19,6 +19,7 @@ composer install
 cp .env.example .env
 ```
 4. **Set your Weather API key in .env**:
+   
 Find your key here: https://openweathermap.org/api
 ```laravel
 WEATHER_API_KEY=your_api_key_here
