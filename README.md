@@ -1,7 +1,5 @@
 **Weather App**
 
-*Project Description*
-
 Weather App is a simple application that allows users to search for the current weather in a city. It fetches live data from a third-party Weather API and displays the current temperature and basic weather information.
 
 Installation: 
